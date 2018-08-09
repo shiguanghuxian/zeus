@@ -1,0 +1,6 @@
+1,test,abc,2,1,text,0:kpiid|1:value|2:date|3:instance|4:code,char,|,0
+2,test1,abc1,2,1,text,kpiid:kpiid|value:value|date:date|instance:instance,regular,kpiid&(?P<kpiid>\d*)&jjsd\|value:(?P<value>.*)\|date%(?P<date>.*)\|hehe\*(?P<instance>.*)@dsdsd,0
+3,test0,abc0,2,1,json,kpiid:kpiid|value:value|date:date|instance:instance|code:code,char,,0
+6,12,1221,2,1,json,12,regular,,1
+7,23,23,3,0,json,23,regular,323,1
+8,343,323,33,1,json,323,regular,1212,1

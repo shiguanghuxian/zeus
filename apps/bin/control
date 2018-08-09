@@ -1,0 +1,89 @@
+#!/bin/bash
+
+WORKSPACE=$(cd $(dirname $0)/; pwd)
+cd $WORKSPACE
+
+mkdir -p var
+
+APPS="zues-dispatchd zues-serverd zues-statisd zues-portal"
+
+function check_pid() {
+    if [ -f var/$1.pid ];then
+        pid=`cat var/$1.pid`
+        if [ -n $pid ]; then
+            running=`ps -p $pid|grep -v "PID TTY" |wc -l`
+            return $running
+        fi
+    fi
+    return 0
+}
+
+function start() {
+    $(check_pid $1);
+    running=$?
+    if [ $running -gt 0 ];then
+        echo -n "$1 now is running already, pid="
+        cat var/$1.pid
+        return 1
+    fi
+
+    nohup ./$1 &> var/$1.log &
+    sleep 1
+    running=`ps -p $! | grep -v "PID TTY" | wc -l`
+    if [ $running -gt 0 ];then
+        echo $! > var/$1.pid
+        echo "$1 started..., pid=$!"
+    else
+        echo "$1 failed to start."
+        return 1
+    fi
+}
+
+function stop() {
+    pid=`cat var/$1.pid`
+	if [ "$pid" != "" ];then
+	    kill $pid
+	    rm -f var/$1.pid
+	    echo "$1 stoped..."
+	else
+		echo "stop $1 error"
+	fi
+}
+
+function restart() {
+    stopall
+    sleep 1
+    startall
+}
+
+function startall(){
+	for i in $APPS;do
+		#echo $i;
+		start $i;
+	done
+}
+
+function stopall(){
+	for i in $APPS;do
+		#echo $i;
+		stop $i;
+	done
+}
+
+function help() {
+    echo "$0 pack|start|stop|restart"
+}
+
+if [ "$1" == "" ]; then
+    help
+elif [ "$1" == "stop" ];then
+    stopall
+elif [ "$1" == "start" ];then
+    startall
+elif [ "$1" == "restart" ];then
+    restart
+elif [ "$1" == "pack" ];then
+    pack
+else
+    help
+fi

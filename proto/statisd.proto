@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_package = "net.53it.proto";
+option objc_class_prefix = "ZN";
+
+package proto;
+
+// 定义服务
+service StatisdService {
+	// 发送消息
+	rpc SayReStartStatisd (StatisdRequest) returns (StatisdReply) {}
+}
+
+// 消息请求体
+message StatisdRequest {	
+}
+
+// 消息响应
+message StatisdReply {
+	string code = 1;			// 请求状态码
+	string message = 2;			// 请求消息
+}

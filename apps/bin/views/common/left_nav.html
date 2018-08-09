@@ -1,0 +1,51 @@
+<ul class="page-sidebar-menu" ng-include="'recursion'" id="left_nav_menu" data-keep-expanded="false" data-auto-scroll="true"
+	data-slide-speed="200">
+
+</ul>
+
+
+<script id="recursion" type="text/ng-template">
+				<li ng-if="leftTopNav" class="sidebar-toggler-wrapper">
+					<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+					<div class="sidebar-toggler hide">
+					</div>
+					<!-- END SIDEBAR TOGGLER BUTTON -->
+				</li>
+				<!--<li ng-if="leftTopNav" class="sidebar-search-wrapper">-->
+					<!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+					<!--<form class="sidebar-search " ng-action="/#/search.html" method="GET">
+						<a href="javascript:;" class="remove">
+							<i class="icon-close"></i>
+						</a>
+						<div class="input-group">
+							<input type="text" class="form-control" id="left_nav_search_keyword" ng-model="left_nav_search_keyword" placeholder="搜索...">
+							<span class="input-group-btn">
+								<a href="javascript:;" class="btn submit" ng-click="nav_search()"><i class="icon-magnifier"></i></a>
+							</span>
+						</div>
+					</form>-->
+					<!-- END RESPONSIVE QUICK SEARCH FORM -->
+				<!--</li>-->
+				<li ng-if="leftTopNav" class="start">
+					<a href="/#/dashboard.html">
+						<i class="icon-home"></i>
+						<span class="title">仪表板</span>
+						<span class="selected"></span>
+					</a>
+				</li>
+				
+				<li ng-repeat="item in leftNavTree">
+					<a ng-show="item.url != ''" ui-sref="{{ item.url || '#' }}" ui-sref-opt="{reload:true}">
+						<i class="{{ item.icon }}"></i>
+						<span class="title">{{ item.name }}</span>
+						<span ng-show="item.child" class="arrow" ng-init="leftTopNav=false"></span>
+					</a>
+					<a ng-show="item.url == '' || item.url == '#'" href="javascript:;">
+						<i class="{{ item.icon }}"></i>
+						<span class="title">{{ item.name }}</span>
+						<span ng-show="item.child" class="arrow" ng-init="leftTopNav=false"></span>
+					</a>
+					<ul class="sub-menu" ng-if="item.child" ng-include="'recursion'" ng-init="leftNavTree=item.child">
+					</ul>
+				</li>
+			</script>

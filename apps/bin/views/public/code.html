@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>时光弧线</title>
+</head>
+
+<body>
+    <form action="/public/verifychk" method="post">
+        <p>Type the numbers you see in the picture below:</p>
+        <p><img id=image src="/public/verifyshow/{[ .Key ]}" alt="Captcha image"></p>
+        <a href="#" onclick="reload()">Reload</a>
+        <input type="hidden" name="captchaId" value="{[ .Key ]}"><br>
+        <input name="captchaSolution">
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>

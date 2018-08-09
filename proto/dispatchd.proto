@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "net.53it.proto";
+option objc_class_prefix = "ZN";
+option java_outer_classname = "Proto";
+
+package proto;
+
+// 定义服务
+service DispatchConfigService {
+	// 获取serverd配置
+	rpc SayDispatchConfig (DispatchRequest) returns (DispatchReply) {}
+	// 获取appname列表
+	rpc SayGetAppNameList(AppNameRequest) returns (AppNameReply) {}
+	// 获取告警解析规则
+	// rpc SayGetEventSetingsList(EventRequest) returns (EventReply) {}
+	// 获取告警配置
+	rpc SayEventSetingsConfig (EventConfigRequest) returns (EventConfigReply) {}
+}
+
+// 消息请求体
+message DispatchRequest {	
+	string topics = 1;			// 请求的会话名
+}
+
+// 消息响应
+message DispatchReply {
+	string code = 1;				// 请求状态码
+	string message = 2;			// 请求消息
+	repeated TopicsConfig data = 3;	// 配置列表
+}
+
+// 具体每一个指标数据
+message TopicsConfig {
+	int32 id = 1; 				// 配置id
+	string topics = 2; 			// 话题
+	string channel = 3; 			// 通道名
+	int32 channel_count = 4; 	// 通道数量
+	string data_type = 5; 		// 数据类型
+	repeated TopicsConfigRule rule_list = 6; // 解析规则列表
+}
+
+// 解析规则
+message TopicsConfigRule {
+	int32 id = 1; // 解析规则id
+	string mapped = 2; // 字段影射
+	string text_un_type = 3; // 解析类型是正则还是特殊字符分割
+	string text_un_rule = 4; // 规则字符串
+	string date_format = 5; // 日期格式化方式
+	string appname = 6; // 应用名
+	string tag = 7; // 标签，用于识别上报数据
+}
+
+// 获取appName服务
+message AppNameRequest {
+	string name = 1; // appname，可以为空，不传则为全部
+}
+
+// appname响应
+message AppNameReply {
+	string code = 1;				// 请求状态码
+	string message = 2;			// 请求消息
+	repeated AppNameInfo data = 3; 			// appname信息列表
+}
+
+// appname 列表
+message AppNameInfo {
+	int32 id = 1; 			// 主键id
+	string app_name = 2; // 表名 唯一
+	string field = 3; 	// 字段名
+	string type  = 4; 	// 字段类型
+	string unit = 5; 	// 单位，用于显示优化
+	int32 index  = 6; 		// 是否索引，对influxdb最有效
+}
+
+// 定义上报配置服务
+service ReportServerdService {
+	// 开启服务上报
+	rpc SayReportServerd (ServerdConfigRequest) returns (DispatchReply) {}
+	// 停止服务上报
+	rpc SayReportServerdStop (ServerdConfigRequest) returns (DispatchReply) {}
+	// 调度器重启所有serverd服务
+	rpc SayRestartServerd (RestartRequest) returns (DispatchReply) {}
+	// 调度器重启服务
+	rpc SayRestartStatisd (RestartRequest) returns (DispatchReply) {}
+}
+
+// 上报数据处理srverd重启地址
+message ServerdConfigRequest {
+	string server_id = 1; 	// serverd 唯一标识
+	string ip_address = 2; 	// ip地址
+	string port = 3; 		// 端口
+}
+
+// 重启服务参数-无用
+message RestartRequest {
+	
+}
+
+// 告警配置获取列表
+// 消息请求体
+message EventConfigRequest {
+	string field = 1; // 查询字段告警设置
+}
+
+// 消息响应
+message EventConfigReply {
+	string code = 1;			// 请求状态码
+	string message = 2;			// 请求消息
+    repeated EventSeting data = 3;	// 配置列表
+}
+
+// 告警设置
+message EventSeting {
+	int32  id = 1;
+	string name = 2;
+	string app_name = 3;
+	string field = 4;
+	string value_type = 5;
+	string describe = 6;
+	int32  continued_time = 7;
+	string cycle_time = 8;
+	int32  enable = 9;
+	int32  is_delete = 10;
+	repeated EventRuleLevel event_rule_list = 11;
+	repeated EventDevice event_device_list = 12;
+	string template_name = 13;
+	string template_content = 14;
+	repeated EventPush event_push_list = 15;
+}
+
+// 告警规则
+message EventRuleLevel {
+	int32  id = 1;
+	int32  event_level_id = 2;
+	int32  event_seting_id = 3;
+	string value = 4;
+	string expression = 5;
+	int32 sort = 6;
+	string unit = 7;
+	string level_name = 8;
+	int32  level = 9;
+	SystemUnitConversion system_unit_conversion_info = 10;
+}
+
+// 告警设备列表
+message EventDevice {
+	int32  id = 1;
+	int32  event_seting_id = 2;
+	int32  device_id = 3;
+	string host_name = 4;
+	string ip = 5;
+	string device_type = 6;
+	string group_name = 7;
+}
+
+// 单位转换
+message SystemUnitConversion {
+	int32 id = 1;
+	string original_unit = 2;
+	string after_unit = 3;
+	double multiple = 4;
+	string lua_code = 5;
+	int32 type = 6; 
+}
+
+// 告警推送列表
+message EventPush {
+	int32  	id = 1;
+	int32 	event_seting_id = 2;
+	string	url = 3;
+	string 	name = 4;
+	int32	data_type = 5;
+}
+
